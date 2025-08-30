@@ -24,4 +24,19 @@ builder.Services.AddOpenApiDocument(config =>
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseOpenApi();
+    app.UseSwaggerUi(config =>
+    {
+        config.DocumentTitle = "PMS";
+        config.Path = "/swagger";
+        config.DocumentPath = "/swagger/pms/swagger.json";
+        config.DocExpansion = "list";
+    });
+}
+
+app.AddProductEndpoints();
+app.AddCategoryEndpoints();
+
 app.Run();
