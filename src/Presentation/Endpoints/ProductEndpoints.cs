@@ -14,6 +14,16 @@ public static class ProductEndpoints
 
         mapGroup.MapDelete("/{id}", DeleteProductById);
     }
+    
+    private static async Task<IResult> CreateProduct(Product product, AppDbContext db)
+    {
+        
+        db.Products.Add(product);
+
+        await db.SaveChangesAsync();
+
+        return TypedResults.Created($"/products/{product.Id}", product);
+    }
 
     private static async Task<IResult> GetProducts(AppDbContext db)
     {
@@ -29,15 +39,7 @@ public static class ProductEndpoints
         return TypedResults.Ok(result);
     }
 
-    private static async Task<IResult> CreateProduct(Product product, AppDbContext db)
-    {
 
-        db.Products.Add(product);
-
-        await db.SaveChangesAsync();
-
-        return TypedResults.Created($"/products/{product.Id}", product);
-    }
 
     private static async Task<IResult> DeleteProductById(int id, AppDbContext db)
     {
