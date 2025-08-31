@@ -6,6 +6,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<GetProductsUseCase>();
         services.AddScoped<CreateProductUseCase>();
+        services.AddScoped<GetProductByIdUseCase>();
 
         return services;
     }

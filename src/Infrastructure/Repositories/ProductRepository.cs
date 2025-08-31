@@ -35,4 +35,11 @@ public class ProductRepository : IProductRepository
 
         return product;
     }
+
+    public async Task<Product> GetProductById(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+
+        return product;
+    }
 }

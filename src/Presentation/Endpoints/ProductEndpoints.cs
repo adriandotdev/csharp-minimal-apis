@@ -30,9 +30,14 @@ public static class ProductEndpoints
         return TypedResults.Ok(products);
     }
 
-    private static async Task<IResult> GetProductById(int id, AppDbContext db)
+    private static async Task<IResult> GetProductById(int id, [FromServices] GetProductByIdUseCase useCase)
     {
-        var result = await db.Products.FindAsync(id) is Product product ? Results.Ok(product) : Results.NotFound();
+        var result = await useCase.Handle(id);
+
+        if (result is null) return TypedResults.NotFound(new
+        {
+            Message = $"Product with ID of {id} is not found"
+        });
 
         return TypedResults.Ok(result);
     }
