@@ -12,6 +12,9 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
     options.UseNpgsql(dbSettings.DefaultConnection);
 });
 
+builder.Services.AddInfrastructure();
+builder.Services.AddApplicationServices();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
 {

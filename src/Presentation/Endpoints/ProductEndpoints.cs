@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 public static class ProductEndpoints
@@ -15,19 +16,16 @@ public static class ProductEndpoints
         mapGroup.MapDelete("/{id}", DeleteProductById);
     }
     
-    private static async Task<IResult> CreateProduct(Product product, AppDbContext db)
+    private static async Task<IResult> CreateProduct([FromServices] CreateProductUseCase useCase, [FromBody] CreateProductRequest request)
     {
-        
-        db.Products.Add(product);
-
-        await db.SaveChangesAsync();
+        var product = await useCase.Handle(request);
 
         return TypedResults.Created($"/products/{product.Id}", product);
     }
 
-    private static async Task<IResult> GetProducts(AppDbContext db)
+    private static async Task<IResult> GetProducts([FromServices] GetProductsUseCase useCase)
     {
-        var products = await db.Products.ToListAsync();
+        var products = await useCase.Handle();
 
         return TypedResults.Ok(products);
     }
@@ -38,8 +36,6 @@ public static class ProductEndpoints
 
         return TypedResults.Ok(result);
     }
-
-
 
     private static async Task<IResult> DeleteProductById(int id, AppDbContext db)
     {
