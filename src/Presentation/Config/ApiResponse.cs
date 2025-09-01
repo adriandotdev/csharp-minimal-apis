@@ -11,12 +11,16 @@ public enum Status
 public class Response<TApiResponse>
 {
     public Status Status;
+
     public TApiResponse? Data;
 
-    public Response(Status status, TApiResponse? data)
+    public string? Message;
+
+    public Response(Status status, TApiResponse? data, string? message = "Success")
     {
         Status = status;
         Data = data;
+        Message = message;
     }
 
     public static IResult MapResponse<TData>(Status response, TData? data = default, string? Message = "")
@@ -25,11 +29,23 @@ public class Response<TApiResponse>
         switch (response)
         {
             case Status.OK:
-                return TypedResults.Ok(data);
+                return TypedResults.Ok(new
+                {
+                    Data = data,
+                    Message
+                });
             case Status.Created:
-                return TypedResults.Created(Message, data);
+                return TypedResults.Created(Message, new
+                {
+                    Data = data
+                });
             case Status.NotFound:
-                return TypedResults.NotFound(Message);
+                return TypedResults.NotFound(
+                    new
+                    {
+                        Message
+                    }
+                );
             default:
                 return TypedResults.InternalServerError();
         }

@@ -37,14 +37,10 @@ public static class ProductEndpoints
         return Response<IResult>.MapResponse(result.Status, data: result.Data);
     }
 
-    private static async Task<IResult> DeleteProductById(int id, AppDbContext db)
+    private static async Task<IResult> DeleteProductById(int id, [FromServices] DeleteProductByIdUseCase useCase)
     {
-        await db.Products.Where(e => e.Id == id)
-        .ExecuteDeleteAsync();
+        var result = await useCase.Handle(id);
 
-        return TypedResults.Ok(new
-        {
-            Message = $"Product with ID of {id} is successfully deleted"
-        });
+        return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }
 }

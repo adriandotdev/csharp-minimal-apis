@@ -12,6 +12,6 @@ public class GetProductsUseCase
 
     public async Task<Response<ICollection<Product>>> Handle()
     {
-        return new Response<ICollection<Product>>(Status.OK, await _productRepository.GetProducts());
+        return new Response<ICollection<Product>>(Status.OK, data: await _productRepository.GetProducts());
     }
 }

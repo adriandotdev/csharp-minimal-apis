@@ -7,7 +7,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GetProductsUseCase>();
         services.AddScoped<CreateProductUseCase>();
         services.AddScoped<GetProductByIdUseCase>();
-
+        services.AddScoped<DeleteProductByIdUseCase>();
+        
         return services;
     }
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
