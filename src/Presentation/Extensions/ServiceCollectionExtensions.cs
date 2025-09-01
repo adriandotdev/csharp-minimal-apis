@@ -15,14 +15,16 @@ public static class ServiceCollectionExtensions
 
         // Categories
         services.AddScoped<GetCategoriesUseCase>();
-
+        services.AddScoped<CreateCategoryUseCase>();
+        services.AddScoped<GetCategoryByIdUseCase>();
+        
         return services;
     }
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
-        
+
         services.AddDbContext<AppDbContext>((serviceProvider, options) =>
         {
             var dbSettings = serviceProvider.GetRequiredService<IOptions<DatabaseSettings>>().Value;
