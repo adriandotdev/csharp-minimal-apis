@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 public static class CategoryEndpoints
@@ -26,9 +27,11 @@ public static class CategoryEndpoints
         return TypedResults.Created($"/api/v1/categories/{category.Id}", category);
     }
 
-    private static async Task<IResult> GetCategories(AppDbContext db)
+    private static async Task<IResult> GetCategories([FromServices] GetCategoriesUseCase useCase)
     {
-        return TypedResults.Ok(await db.Categories.ToListAsync());
+        var result = await useCase.Handle();
+
+        return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }
 
     private static async Task<IResult> GetCategoryById(int id, AppDbContext db)
