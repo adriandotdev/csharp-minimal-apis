@@ -20,7 +20,7 @@ public static class ProductEndpoints
     {
         var response = await useCase.Handle(request);
 
-        return Response<Product>.MapResponse<object>(response.Status, response);
+        return Response<Product>.MapResponse<object>(response.Status, response.Data, $"/api/v1/products/{response?.Data?.Id}");
     }
 
     private static async Task<IResult> GetProducts([FromServices] GetProductsUseCase useCase)
