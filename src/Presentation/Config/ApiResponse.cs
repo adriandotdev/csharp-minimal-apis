@@ -23,7 +23,7 @@ public class Response<TApiResponse>
         Message = message;
     }
 
-    public static IResult MapResponse<TData>(Status response, TData? data = default, string? Message = "")
+    public static IResult MapResponse<TData>(Status response, TData? data = default, string? Message = "Success")
     {
 
         switch (response)

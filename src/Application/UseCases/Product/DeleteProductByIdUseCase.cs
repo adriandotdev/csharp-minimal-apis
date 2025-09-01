@@ -20,7 +20,7 @@ public class DeleteProductByIdUseCase
 
             await _productRepository.DeleteProductById(id);
 
-            return new Response<object?>(Status.OK, $"Product with ID of {id} is successfully deleted");
+            return new Response<object?>(Status.OK, null, $"Product with ID of {id} is successfully deleted");
         }
         catch (Exception e)
         {
