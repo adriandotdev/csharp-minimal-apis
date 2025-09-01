@@ -72,5 +72,6 @@ coverage/
 *.bak
 *.swp
 
-appsettings.Development.json
+appsettings*.json
 
+!appsettings.example.json
