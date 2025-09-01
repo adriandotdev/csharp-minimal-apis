@@ -10,8 +10,8 @@ public class GetProductsUseCase
         _productRepository = productRepository;
     }
 
-    public async Task<ICollection<Product>> Handle()
+    public async Task<Response<ICollection<Product>>> Handle()
     {
-        return await _productRepository.GetProducts();
+        return new Response<ICollection<Product>>(Status.OK, await _productRepository.GetProducts());
     }
 }

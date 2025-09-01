@@ -10,8 +10,8 @@ public class CreateProductUseCase
         _productRepository = productRepository;
     }
 
-    public async Task<Product> Handle(CreateProductRequest request)
+    public async Task<Response<Product>> Handle(CreateProductRequest request)
     {
-       return await _productRepository.CreateProduct(request);
+       return new Response<Product>(Status.Created, await _productRepository.CreateProduct(request));
     }
 }

@@ -1,4 +1,5 @@
 using Application.Interfaces;
+using YamlDotNet.Core.Tokens;
 
 public class GetProductByIdUseCase
 {
@@ -10,8 +11,19 @@ public class GetProductByIdUseCase
         _productRepository = productRepository;
     }
 
-    public async Task<Product> Handle(int id)
+    public async Task<Response<Product>> Handle(int id)
     {
-        return await _productRepository.GetProductById(id);
+        try
+        {
+            var product = await _productRepository.GetProductById(id);
+
+            if (product is null) return new Response<Product>(Status.NotFound, null);
+
+            return new Response<Product>(Status.OK, product);
+        }
+        catch (Exception e)
+        {
+            return new Response<Product>(Status.Forbidden, null);
+        }
     }
 }

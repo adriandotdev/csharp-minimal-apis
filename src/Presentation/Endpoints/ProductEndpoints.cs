@@ -18,28 +18,23 @@ public static class ProductEndpoints
     
     private static async Task<IResult> CreateProduct([FromServices] CreateProductUseCase useCase, [FromBody] CreateProductRequest request)
     {
-        var product = await useCase.Handle(request);
+        var response = await useCase.Handle(request);
 
-        return TypedResults.Created($"/products/{product.Id}", product);
+        return Response<Product>.MapResponse<object>(response.Status, response);
     }
 
     private static async Task<IResult> GetProducts([FromServices] GetProductsUseCase useCase)
     {
-        var products = await useCase.Handle();
+        var response = await useCase.Handle();
 
-        return TypedResults.Ok(products);
+        return Response<ICollection<Product>>.MapResponse(response.Status, response.Data);
     }
 
     private static async Task<IResult> GetProductById(int id, [FromServices] GetProductByIdUseCase useCase)
     {
         var result = await useCase.Handle(id);
 
-        if (result is null) return TypedResults.NotFound(new
-        {
-            Message = $"Product with ID of {id} is not found"
-        });
-
-        return TypedResults.Ok(result);
+        return Response<IResult>.MapResponse(result.Status, data: result.Data);
     }
 
     private static async Task<IResult> DeleteProductById(int id, AppDbContext db)
