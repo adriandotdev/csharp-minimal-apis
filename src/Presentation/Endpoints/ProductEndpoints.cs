@@ -8,7 +8,7 @@ public static class ProductEndpoints
         var mapGroup = app.MapGroup("/api/v1/products");
 
         mapGroup.MapGet("/", GetProducts);
-
+   
         mapGroup.MapGet("/{id}", GetProductById);
 
         mapGroup.MapPost("/", CreateProduct);

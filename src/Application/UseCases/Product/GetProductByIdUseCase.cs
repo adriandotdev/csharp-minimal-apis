@@ -23,7 +23,7 @@ public class GetProductByIdUseCase
         }
         catch (Exception e)
         {
-            return new Response<Product>(Status.Forbidden, null);
+            return new Response<Product>(Status.InternalServerError, null, e.Message);
         }
     }
 }
