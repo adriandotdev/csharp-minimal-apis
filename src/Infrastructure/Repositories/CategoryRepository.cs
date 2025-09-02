@@ -37,8 +37,17 @@ public class CategoryRepository : ICategoryRepository
         return category;
     }
 
-    public Task<Category> UpdateCategory(int id, CreateCategoryRequest request)
+    public async Task<Category> UpdateCategory(int id, CreateCategoryRequest request)
     {
-        throw new NotImplementedException();
+        var category = await _context.Categories.FindAsync(id);
+
+        if (category is null) return null;
+
+        category.Name = request.Name ?? category.Name;
+        category.Description = request.Description ?? category.Description;
+
+        await _context.SaveChangesAsync();
+
+        return category;
     }
 }

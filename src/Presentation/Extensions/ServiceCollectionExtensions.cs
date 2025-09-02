@@ -17,9 +17,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GetCategoriesUseCase>();
         services.AddScoped<CreateCategoryUseCase>();
         services.AddScoped<GetCategoryByIdUseCase>();
-        
+        services.AddScoped<UpdateCategoryUseCase>();
+
         return services;
     }
+    
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddScoped<IProductRepository, ProductRepository>();
@@ -30,7 +32,7 @@ public static class ServiceCollectionExtensions
             var dbSettings = serviceProvider.GetRequiredService<IOptions<DatabaseSettings>>().Value;
             options.UseNpgsql(dbSettings.DefaultConnection);
         });
-        
+
         return services;
     }
 }
