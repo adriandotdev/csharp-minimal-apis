@@ -10,9 +10,19 @@ public class CategoryRepository : ICategoryRepository
         _context = context;
     }
 
-    public Task<Category> AddCategory(CreateCategoryRequest request)
+    public async Task<Category> CreateCategory(CreateCategoryRequest request)
     {
-        throw new NotImplementedException();
+        Category category = new()
+        {
+            Name = request.Name,
+            Description = request.Description,
+        };
+
+        _context.Categories.Add(category);
+
+        await _context.SaveChangesAsync();
+
+        return category;
     }
 
     public async Task<ICollection<Category>> GetCategories()
@@ -20,8 +30,24 @@ public class CategoryRepository : ICategoryRepository
         return await _context.Categories.ToListAsync();
     }
 
-    public Task<Category> UpdateCategory(int id, CreateCategoryRequest request)
+    public async Task<Category> GetCategoryById(int id)
     {
-        throw new NotImplementedException();
+        var category = await _context.Categories.FindAsync(id);
+
+        return category;
+    }
+
+    public async Task<Category> UpdateCategory(int id, CreateCategoryRequest request)
+    {
+        var category = await _context.Categories.FindAsync(id);
+
+        if (category is null) return null;
+
+        category.Name = request.Name ?? category.Name;
+        category.Description = request.Description ?? category.Description;
+
+        await _context.SaveChangesAsync();
+
+        return category;
     }
 }

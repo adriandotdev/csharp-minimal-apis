@@ -15,20 +15,24 @@ public static class ServiceCollectionExtensions
 
         // Categories
         services.AddScoped<GetCategoriesUseCase>();
+        services.AddScoped<CreateCategoryUseCase>();
+        services.AddScoped<GetCategoryByIdUseCase>();
+        services.AddScoped<UpdateCategoryUseCase>();
 
         return services;
     }
+    
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
-        
+
         services.AddDbContext<AppDbContext>((serviceProvider, options) =>
         {
             var dbSettings = serviceProvider.GetRequiredService<IOptions<DatabaseSettings>>().Value;
             options.UseNpgsql(dbSettings.DefaultConnection);
         });
-        
+
         return services;
     }
 }

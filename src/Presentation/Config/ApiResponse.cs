@@ -25,7 +25,6 @@ public class Response<TApiResponse>
 
     public static IResult MapResponse<TData>(Status response, TData? data = default, string? Message = "Success")
     {
-
         switch (response)
         {
             case Status.OK:
