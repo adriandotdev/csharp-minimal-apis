@@ -17,9 +17,11 @@ public class GetProductByIdUseCase
         {
             var product = await _productRepository.GetProductById(id);
 
-            if (product is null) return new Response<Product>(Status.NotFound, null, $"Product with ID of {id} is not found");
-
             return new Response<Product>(Status.OK, product);
+        }
+        catch (KeyNotFoundException e)
+        {
+            return new Response<Product>(Status.NotFound, null, e.Message);
         }
         catch (Exception e)
         {

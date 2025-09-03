@@ -11,10 +11,19 @@ public class GetCategoryByIdUseCase
 
     public async Task<Response<Category>> Handle(int id)
     {
-        var category = await _categoryRepository.GetCategoryById(id);
+        try
+        {
+            var category = await _categoryRepository.GetCategoryById(id);
 
-        if (category is null) return new Response<Category>(Status.NotFound, default);
-
-        return new Response<Category>(Status.OK, category);
+            return new Response<Category>(Status.OK, category);
+        }
+        catch (KeyNotFoundException e)
+        {
+            return new Response<Category>(Status.NotFound, null, e.Message);
+        }
+        catch (Exception e)
+        {
+            return new Response<Category>(Status.InternalServerError, null, e.Message);
+        }
     }
 }

@@ -34,6 +34,8 @@ public class CategoryRepository : ICategoryRepository
     {
         var category = await _context.Categories.FindAsync(id);
 
+        if (category is null) throw new KeyNotFoundException($"Category with ID of {id} not found");
+
         return category;
     }
 
@@ -41,7 +43,7 @@ public class CategoryRepository : ICategoryRepository
     {
         var category = await _context.Categories.FindAsync(id);
 
-        if (category is null) return null;
+        if (category is null) throw new KeyNotFoundException($"Category with ID of {id} not found");
 
         category.Name = request.Name ?? category.Name;
         category.Description = request.Description ?? category.Description;

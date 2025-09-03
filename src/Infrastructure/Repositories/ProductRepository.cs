@@ -40,6 +40,8 @@ public class ProductRepository : IProductRepository
     {
         var product = await _context.Products.FindAsync(id);
 
+        if (product is null) throw new KeyNotFoundException($"Product with id of {id} not found");
+        
         return product;
     }
 
