@@ -19,6 +19,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GetCategoryByIdUseCase>();
         services.AddScoped<UpdateCategoryUseCase>();
 
+        // Users
+        services.AddScoped<CreateUserUseCase>();
+
         // Misc Services
         services.AddScoped<JwtService>();
         
@@ -29,7 +32,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
-
+        services.AddScoped<IUserRepository, UserRepository>();
+        
         services.AddDbContext<AppDbContext>((serviceProvider, options) =>
         {
             var dbSettings = serviceProvider.GetRequiredService<IOptions<DatabaseSettings>>().Value;

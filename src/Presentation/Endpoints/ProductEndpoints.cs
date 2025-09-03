@@ -5,15 +5,15 @@ public static class ProductEndpoints
 {
     public static void AddProductEndpoints(this IEndpointRouteBuilder app)
     {
-        var mapGroup = app.MapGroup("/api/v1/products");
+        var group = app.MapGroup("/api/v1/products");
 
-        mapGroup.MapGet("/", GetProducts);
+        group.MapGet("/", GetProducts);
    
-        mapGroup.MapGet("/{id}", GetProductById);
+        group.MapGet("/{id}", GetProductById);
 
-        mapGroup.MapPost("/", CreateProduct);
+        group.MapPost("/", CreateProduct);
 
-        mapGroup.MapDelete("/{id}", DeleteProductById);
+        group.MapDelete("/{id}", DeleteProductById);
     }
     
     private static async Task<IResult> CreateProduct([FromServices] CreateProductUseCase useCase, [FromBody] CreateProductRequest request)
