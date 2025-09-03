@@ -19,6 +19,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GetCategoryByIdUseCase>();
         services.AddScoped<UpdateCategoryUseCase>();
 
+        // Misc Services
+        services.AddScoped<JwtService>();
+        
         return services;
     }
     
