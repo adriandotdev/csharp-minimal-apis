@@ -7,7 +7,8 @@ public enum Status
     NotFound,
     InternalServerError,
     Conflict,
-    BadRequest
+    BadRequest,
+    Unauthorized
 }
 
 public class Response<TApiResponse>
@@ -57,6 +58,8 @@ public class Response<TApiResponse>
                 {
                     Message
                 });
+            case Status.Unauthorized:
+                return TypedResults.Unauthorized();
             default:
                 return TypedResults.InternalServerError();
         }

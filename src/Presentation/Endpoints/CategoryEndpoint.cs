@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 public static class CategoryEndpoints
 {
 
+    // @TODO: Add Authorization to all endpoitns
     public static void AddCategoryEndpoints(this IEndpointRouteBuilder app)
     {
         var mapGroup = app.MapGroup("/api/v1/categories");
