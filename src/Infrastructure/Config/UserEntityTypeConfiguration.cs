@@ -33,8 +33,8 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder
             .Property(u => u.Status)
             .HasConversion<string>()
-            .HasDefaultValue(UserStatuses.Inactive);
-
+            .IsRequired();
+            
         builder
             .Property(u => u.LastLoginAt)
             .HasDefaultValueSql("NULL");

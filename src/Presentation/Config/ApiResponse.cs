@@ -5,7 +5,9 @@ public enum Status
     Created,
     Forbidden,
     NotFound,
-    InternalServerError
+    InternalServerError,
+    Conflict,
+    BadRequest
 }
 
 public class Response<TApiResponse>
@@ -45,6 +47,16 @@ public class Response<TApiResponse>
                         Message
                     }
                 );
+            case Status.Conflict:
+                return TypedResults.Conflict(new
+                {
+                    Message
+                });
+            case Status.BadRequest:
+                return TypedResults.BadRequest(new
+                {
+                    Message
+                });
             default:
                 return TypedResults.InternalServerError();
         }
