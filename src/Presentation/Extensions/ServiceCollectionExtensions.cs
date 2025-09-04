@@ -18,10 +18,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<CreateCategoryUseCase>();
         services.AddScoped<GetCategoryByIdUseCase>();
         services.AddScoped<UpdateCategoryUseCase>();
-
+    
         // Users
         services.AddScoped<CreateUserUseCase>();
-
+        services.AddScoped<LoginUseCase>();
+        
         // Misc Services
         services.AddScoped<JwtService>();
         
