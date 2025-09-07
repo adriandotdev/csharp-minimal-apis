@@ -8,6 +8,8 @@ public static class AuthenticationEndpoint
 
         group.MapPost("/signup", SignUp);
         group.MapPost("/login", Login);
+        // @TODO Refresh endpoint.
+        // @TODO Add "Async" for every asynchronous methods or functions.
     }
 
     public static async Task<IResult> SignUp([FromBody] CreateUserRequest request, [FromServices] CreateUserUseCase useCase)
