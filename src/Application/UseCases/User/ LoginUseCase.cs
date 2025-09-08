@@ -33,7 +33,7 @@ public class LoginUseCase
             new("scope", userScope),
             new("token_type", "access"),
             new("sub", user.Username)
-        ], 0.2, _configuration);
+        ], 15, _configuration);
 
         var refreshToken = JwtService.GenerateJwtToken([
             new ("role", user.Roles.ToString()),
