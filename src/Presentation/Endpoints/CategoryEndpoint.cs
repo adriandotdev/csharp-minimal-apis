@@ -1,21 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 public static class CategoryEndpoints
 {
-
     // @TODO: Add Authorization to all endpoitns
     public static void AddCategoryEndpoints(this IEndpointRouteBuilder app)
     {
         var mapGroup = app.MapGroup("/api/v1/categories");
 
-        mapGroup.MapPost("/", CreateCategory);
+        mapGroup.MapPost("/", CreateCategory).RequireAuthorization("admin_access");
 
-        mapGroup.MapGet("/{id}", GetCategoryById);
+        mapGroup.MapGet("/{id}", GetCategoryById).RequireAuthorization("general_access");
 
-        mapGroup.MapGet("/", GetCategories);
+        mapGroup.MapGet("/", GetCategories).RequireAuthorization("general_access");
 
-        mapGroup.MapPut("/{id}", UpdateCategoryById);
+        mapGroup.MapPut("/{id}", UpdateCategoryById).RequireAuthorization("admin_access");
     }
 
     private static async Task<IResult> CreateCategory([FromBody] CreateCategoryRequest request, [FromServices] CreateCategoryUseCase useCase)

@@ -8,11 +8,11 @@ public static class ProductEndpoints
 
         group.MapGet("/", GetProducts).RequireAuthorization("general_access");
    
-        group.MapGet("/{id}", GetProductById);
+        group.MapGet("/{id}", GetProductById).RequireAuthorization("general_access");
 
         group.MapPost("/", CreateProduct).RequireAuthorization("admin_access");
 
-        group.MapDelete("/{id}", DeleteProductById);
+        group.MapDelete("/{id}", DeleteProductById).RequireAuthorization("admin_access");
     }
     
     private static async Task<IResult> CreateProduct([FromServices] CreateProductUseCase useCase, [FromBody] CreateProductRequest request)
