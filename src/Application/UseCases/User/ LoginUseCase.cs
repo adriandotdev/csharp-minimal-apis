@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using BCrypt.Net;
 using JsonWebToken;
 
@@ -27,13 +28,13 @@ public class LoginUseCase
         var userScope = user.Roles.ToString() == "Admin" ? "admin_scope" : "user_scope";
 
         var accessToken = JwtService.GenerateJwtToken([
-            new("role", user.Roles.ToString()),
+            new(ClaimTypes.Role, user.Roles.ToString()),
             new("scope", userScope),
             new("token_type", "access")
         ], 15, _configuration);
 
         var refreshToken = JwtService.GenerateJwtToken([
-            new ("role", user.Roles.ToString()),
+            new (ClaimTypes.Role, user.Roles.ToString()),
             new ("scope", userScope),
             new ("token_type", "refresh")
         ], 30, _configuration);

@@ -8,6 +8,7 @@ public static class AuthenticationEndpoint
 
         group.MapPost("/signup", SignUp);
         group.MapPost("/login", Login);
+        group.MapPost("/refresh", RefreshToken);
         // @TODO Refresh endpoint.
         // @TODO Add "Async" for every asynchronous methods or functions.
     }
@@ -22,6 +23,13 @@ public static class AuthenticationEndpoint
     public static async Task<IResult> Login([FromBody] LoginRequest request, [FromServices] LoginUseCase useCase)
     {
         var result = await useCase.Handle(request);
+
+        return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
+    }
+
+    public static async Task<IResult> RefreshToken([FromHeader(Name = "Authorization")] string Token, [FromServices] RefreshTokenUseCase useCase)
+    {
+        var result = useCase.Handle(Token);
 
         return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }

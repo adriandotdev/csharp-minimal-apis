@@ -22,6 +22,7 @@ public static class ServiceCollectionExtensions
         // Users
         services.AddScoped<CreateUserUseCase>();
         services.AddScoped<LoginUseCase>();
+        services.AddScoped<RefreshTokenUseCase>();
         
         // Misc Services
         services.AddScoped<JwtService>();
