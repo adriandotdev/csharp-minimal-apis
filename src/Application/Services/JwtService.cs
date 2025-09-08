@@ -7,7 +7,7 @@ public class JwtService
 {
     public static string GenerateJwtToken(List<Claim> claims, double expiration, IConfiguration configuration)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Authentication:Schemes:Bearer:SecretKey"]!));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Authentication:Schemes:Bearer:IssuerSigningKey"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
@@ -24,7 +24,7 @@ public class JwtService
     public static ClaimsPrincipal? ValidateJwtToken(string token, IConfiguration configuration)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(configuration["Authentication:Schemes:Bearer:SecretKey"]!);
+        var key = Encoding.UTF8.GetBytes(configuration["Authentication:Schemes:Bearer:IssuerSigningKey"]!);
 
         var validationParameters = new TokenValidationParameters
         {

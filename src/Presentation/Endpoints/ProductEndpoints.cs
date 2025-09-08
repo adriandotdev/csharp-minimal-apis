@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 public static class ProductEndpoints
 {
@@ -7,11 +6,11 @@ public static class ProductEndpoints
     {
         var group = app.MapGroup("/api/v1/products");
 
-        group.MapGet("/", GetProducts);
+        group.MapGet("/", GetProducts).RequireAuthorization("general_access");
    
         group.MapGet("/{id}", GetProductById);
 
-        group.MapPost("/", CreateProduct);
+        group.MapPost("/", CreateProduct).RequireAuthorization("admin_access");
 
         group.MapDelete("/{id}", DeleteProductById);
     }

@@ -1,7 +1,10 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using Configurations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,12 +20,52 @@ builder.Services.AddInfrastructure();
 builder.Services.AddApplicationServices();
 
 builder.Services.AddCors();
-builder.Services.AddAuthentication().AddJwtBearer("Bearer");
-builder.Services.AddAuthorization();
 
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("admin_sample", policy => policy.RequireRole("admin").RequireClaim("scope", "admin_scope"))
-    .AddPolicy("user_sample", policy => policy.RequireRole("user").RequireClaim("scope", "user_scope"));
+builder.Services.AddAuthentication().AddJwtBearer(options =>
+    {
+        var config = builder.Configuration.GetSection("Authentication:Schemes:Bearer");
+        
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = config["ValidIssuer"],
+            ValidAudience = config["ValidAudience"],
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["IssuerSigningKey"]!))
+        };
+    });
+
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("admin_access",
+        policy =>
+            policy
+                .RequireRole("Admin")
+                .RequireClaim("scope", "admin_scope")
+                .RequireClaim("token_type", "access")
+    );
+
+    options.AddPolicy("staff_access",
+        policy =>
+            policy
+                .RequireRole("Staff")
+                .RequireClaim("scope", "staff_scope")
+                .RequireClaim("token_type", "access")
+    );
+
+    options.AddPolicy("general_access",
+        policy =>
+            policy
+                .RequireRole("Admin", "Staff")
+                .RequireClaim("scope", ["staff_scope", "admin_scope"])
+                .RequireClaim("token_type", "access")
+    );
+
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
