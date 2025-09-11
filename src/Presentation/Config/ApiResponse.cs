@@ -1,4 +1,6 @@
 
+using FluentValidation.Results;
+
 public enum Status
 {
     OK,
@@ -9,6 +11,12 @@ public enum Status
     Conflict,
     BadRequest,
     Unauthorized
+}
+
+public class ValidationErrorDto
+{
+    public string PropertyName { get; set; } = string.Empty;
+    public string ErrorMessage { get; set; } = string.Empty;
 }
 
 public class Response<TApiResponse>
@@ -63,5 +71,16 @@ public class Response<TApiResponse>
             default:
                 return TypedResults.InternalServerError();
         }
+    }
+
+    public static List<ValidationErrorDto> MapErrors(ValidationResult result)
+    {
+        return result.Errors
+            .Select(error => new ValidationErrorDto
+            {
+               ErrorMessage =  error.ErrorMessage,
+                PropertyName = error.PropertyName
+            })
+            .ToList();
     }
 }
