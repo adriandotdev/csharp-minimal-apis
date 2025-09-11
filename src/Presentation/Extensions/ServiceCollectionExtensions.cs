@@ -2,6 +2,7 @@ using Application.Interfaces;
 using Configurations;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
 
 public static class ServiceCollectionExtensions
 {
@@ -24,9 +25,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<LoginUseCase>();
         services.AddScoped<RefreshTokenUseCase>();
         
-        // Misc Services
+        // Utils
         services.AddScoped<JwtService>();
-        
+
+        // Validators
+        services.AddScoped<IValidator<CreateCategoryRequest>, CreateCategoryValidator>();
+        services.AddScoped<IValidator<CreateProductRequest>, CreateProductValidator>();
+        services.AddScoped<IValidator<IdRequest>, GetProductByIdValidator>();
+
         return services;
     }
     
