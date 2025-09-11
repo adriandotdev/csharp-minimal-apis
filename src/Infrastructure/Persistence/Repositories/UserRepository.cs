@@ -18,8 +18,8 @@ public class UserRepository : IUserRepository
             Username = request.Username,
             Email = request.Email,
             Password = request.Password,
-            Roles = request.Role,
-            Status = request.Status
+            Roles = Enum.Parse<UserRoles>(request.Role),
+            Status = Enum.Parse<UserStatuses>(request.Status)
         };
 
         _context.Users.Add(newUser);

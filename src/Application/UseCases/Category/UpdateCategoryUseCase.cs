@@ -9,10 +9,15 @@ public class UpdateCategoryUseCase
 
     public async Task<Response<Category>> Handle(int id, CreateCategoryRequest request)
     {
-        var category = await _categoryRepository.UpdateCategory(id, request);
+        try
+        {
+            var category = await _categoryRepository.UpdateCategory(id, request);
 
-        if (category is null) return new Response<Category>(Status.NotFound, default, $"Category with ID of {id} is not found");
-
-        return new Response<Category>(Status.OK, category);
+            return new Response<Category>(Status.OK, category);
+        }
+        catch (KeyNotFoundException ex)
+        {
+             return new Response<Category>(Status.NotFound, default, ex.Message);
+        }
     }
 }

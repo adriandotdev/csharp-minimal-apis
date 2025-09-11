@@ -31,8 +31,10 @@ public static class ServiceCollectionExtensions
         // Validators
         services.AddScoped<IValidator<CreateCategoryRequest>, CreateCategoryValidator>();
         services.AddScoped<IValidator<CreateProductRequest>, CreateProductValidator>();
-        services.AddScoped<IValidator<IdRequest>, GetProductByIdValidator>();
-
+        services.AddScoped<IValidator<IdRequest>, GetResourceByIdValidator>();
+        services.AddScoped<IValidator<CreateUserRequest>, CreateUserValidator>();
+        services.AddScoped<IValidator<LoginRequest>, LoginValidator>();
+        
         return services;
     }
     

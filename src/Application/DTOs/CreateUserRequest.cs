@@ -4,6 +4,6 @@ public record CreateUserRequest (
     string Username,
     string Email,
     string Password,
-    UserRoles Role,
-    UserStatuses Status
+    string Role,
+    string Status
 );

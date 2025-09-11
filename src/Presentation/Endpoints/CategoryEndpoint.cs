@@ -1,8 +1,8 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 public static class CategoryEndpoints
 {
-    // @TODO: Add Authorization to all endpoitns
     public static void AddCategoryEndpoints(this IEndpointRouteBuilder app)
     {
         var mapGroup = app.MapGroup("/api/v1/categories");
@@ -16,8 +16,15 @@ public static class CategoryEndpoints
         mapGroup.MapPut("/{id}", UpdateCategoryById).RequireAuthorization("admin_access");
     }
 
-    private static async Task<IResult> CreateCategory([FromBody] CreateCategoryRequest request, [FromServices] CreateCategoryUseCase useCase)
+    private static async Task<IResult> CreateCategory([FromBody] CreateCategoryRequest request, [FromServices] CreateCategoryUseCase useCase, IValidator<CreateCategoryRequest> validator)
     {
+        var validationResult = await validator.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.BadRequest(Response<IResult>.MapErrors(validationResult));
+        }
+
         var result = await useCase.Handle(request);
 
         return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
@@ -30,16 +37,43 @@ public static class CategoryEndpoints
         return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }
 
-    private static async Task<IResult> GetCategoryById(int id, [FromServices] GetCategoryByIdUseCase useCase)
+    private static async Task<IResult> GetCategoryById(string id, [FromServices] GetCategoryByIdUseCase useCase, IValidator<IdRequest> validator)
     {
-        var result = await useCase.Handle(id);
+        var request = new IdRequest { Id = id };
+        var validationResult = await validator.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.BadRequest(Response<IResult>.MapErrors(validationResult));
+        }
+
+        var result = await useCase.Handle(int.Parse(id));
 
         return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }
 
-    private static async Task<IResult> UpdateCategoryById(int id, [FromBody] CreateCategoryRequest request, [FromServices] UpdateCategoryUseCase useCase)
+    private static async Task<IResult> UpdateCategoryById(
+        string id,
+        [FromBody] CreateCategoryRequest request,
+        [FromServices] UpdateCategoryUseCase useCase,
+        IValidator<IdRequest> parameterValidator,
+        IValidator<CreateCategoryRequest> requestBodyValidator)
     {
-        var result = await useCase.Handle(id, request);
+        var parameterRequest = new IdRequest { Id = id };
+        var parameterValidationResult = await parameterValidator.ValidateAsync(parameterRequest);
+        var requestBodyValidationResult = await requestBodyValidator.ValidateAsync(request);
+
+        if (!parameterValidationResult.IsValid)
+        {
+            return TypedResults.BadRequest(Response<IResult>.MapErrors(parameterValidationResult));
+        }
+
+        if (!requestBodyValidationResult.IsValid)
+        {
+            return TypedResults.BadRequest(Response<IResult>.MapErrors(requestBodyValidationResult));
+        }
+
+        var result = await useCase.Handle(int.Parse(id), request);
 
         return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }

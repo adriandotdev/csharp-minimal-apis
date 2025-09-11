@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 public static class ProductEndpoints
@@ -15,8 +16,16 @@ public static class ProductEndpoints
         group.MapDelete("/{id}", DeleteProductById).RequireAuthorization("admin_access");
     }
     
-    private static async Task<IResult> CreateProduct([FromServices] CreateProductUseCase useCase, [FromBody] CreateProductRequest request)
+    private static async Task<IResult> CreateProduct([FromServices] CreateProductUseCase useCase, [FromBody] CreateProductRequest request, IValidator<CreateProductRequest> validator)
     {
+
+        var validationResult = await validator.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.BadRequest(Response<IResult>.MapErrors(validationResult));
+        }
+
         var result = await useCase.Handle(request);
 
         return Response<IResult>.MapResponse(result.Status, result.Data, $"/api/v1/products/{result?.Data?.Id}");
@@ -29,16 +38,32 @@ public static class ProductEndpoints
         return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }
 
-    private static async Task<IResult> GetProductById(int id, [FromServices] GetProductByIdUseCase useCase)
+    private static async Task<IResult> GetProductById(string id, [FromServices] GetProductByIdUseCase useCase, IValidator<IdRequest> validator)
     {
-        var result = await useCase.Handle(id);
+        var request = new IdRequest { Id = id };
+        var validationResult = await validator.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.BadRequest(Response<IResult>.MapErrors(validationResult));
+        }
+        
+        var result = await useCase.Handle(int.Parse(id));
 
         return Response<IResult>.MapResponse(result.Status, data: result.Data, result.Message);
     }
 
-    private static async Task<IResult> DeleteProductById(int id, [FromServices] DeleteProductByIdUseCase useCase)
+    private static async Task<IResult> DeleteProductById(string id, [FromServices] DeleteProductByIdUseCase useCase, IValidator<IdRequest> validator)
     {
-        var result = await useCase.Handle(id);
+        var request = new IdRequest { Id = id };
+        var validationResult = await validator.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.BadRequest(Response<IResult>.MapErrors(validationResult));
+        }
+
+        var result = await useCase.Handle(int.Parse(id));
 
         return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }
