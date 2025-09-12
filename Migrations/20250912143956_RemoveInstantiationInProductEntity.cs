@@ -5,7 +5,7 @@
 namespace inventory_management_system.Migrations
 {
     /// <inheritdoc />
-    public partial class AddFKConstraint : Migration
+    public partial class RemoveInstantiationInProductEntity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

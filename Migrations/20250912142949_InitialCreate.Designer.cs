@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace inventory_management_system.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250904115917_RemoveInitialUserStatusValue")]
-    partial class RemoveInitialUserStatusValue
+    [Migration("20250912142949_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
