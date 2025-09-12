@@ -1,5 +1,5 @@
 public record LoginResponse(
 
-    string AcessToken,
+    string AccessToken,
     string RefreshToken
 );
