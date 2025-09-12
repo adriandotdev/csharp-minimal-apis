@@ -28,12 +28,20 @@ public static class ProductEndpoints
 
         var result = await useCase.Handle(request);
 
-        return Response<IResult>.MapResponse(result.Status, result.Data, $"/api/v1/products/{result?.Data?.Id}");
+        return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }
 
-    private static async Task<IResult> GetProducts([FromServices] GetProductsUseCase useCase)
+    private static async Task<IResult> GetProducts([FromQuery(Name = "product_name")] string? productName, [FromQuery(Name = "category")] string? categoryName,  [FromServices] GetProductsUseCase useCase, ILogger<Program> logger)
     {
-        var result = await useCase.Handle();
+        logger.LogInformation($"Query: {productName}");
+
+        var productFilter = new ProductFilter
+        {
+            ProductName = productName,
+            Category = categoryName
+        };
+
+        var result = await useCase.Handle(productFilter);
 
         return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }

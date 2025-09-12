@@ -48,6 +48,7 @@ public class ProductEntityTypeConfiguration : IEntityTypeConfiguration<Product>
             .HasOne(p => p.Category)
             .WithMany(c => c.Products)
             .HasForeignKey(p => p.CategoryId)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

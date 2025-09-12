@@ -2,8 +2,8 @@ namespace Application.Interfaces;
 
 public interface IProductRepository
 {
-    Task<ICollection<Product>> GetProducts();
-    Task<Product> CreateProduct(CreateProductRequest request);
+    Task<ICollection<Product>> GetProducts(ProductFilter productFilter);
+    Task<CreateProductResponse> CreateProduct(CreateProductRequest request);
     Task<Product> GetProductById(int id);
     Task DeleteProductById(int id);    
 }
