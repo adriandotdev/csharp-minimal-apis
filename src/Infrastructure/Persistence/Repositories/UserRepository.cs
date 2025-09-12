@@ -33,6 +33,8 @@ public class UserRepository : IUserRepository
     {
         var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == email);
 
+        if (user is null) throw new KeyNotFoundException($"User with email of {email} is not found");
+
         return user;
     }
 
@@ -40,6 +42,8 @@ public class UserRepository : IUserRepository
     {
         var user = await _context.Users.FirstOrDefaultAsync(user => user.Username == username);
 
+        if (user is null) throw new KeyNotFoundException($"User with username of {username} is not found");
+        
         return user;
     }
 }

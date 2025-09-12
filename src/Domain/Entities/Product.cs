@@ -21,6 +21,6 @@ public class Product
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
-    
-    public Category Category { get; set; }
+
+    public Category Category { get; set; } = new Category();
 }

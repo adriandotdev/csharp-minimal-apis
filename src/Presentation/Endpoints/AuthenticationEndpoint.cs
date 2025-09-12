@@ -40,7 +40,7 @@ public static class AuthenticationEndpoint
         return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }
 
-    public static async Task<IResult> RefreshToken([FromHeader(Name = "Authorization")] string Token, [FromServices] RefreshTokenUseCase useCase)
+    public static IResult RefreshToken([FromHeader(Name = "Authorization")] string Token, [FromServices] RefreshTokenUseCase useCase)
     {
         var result = useCase.Handle(Token);
 

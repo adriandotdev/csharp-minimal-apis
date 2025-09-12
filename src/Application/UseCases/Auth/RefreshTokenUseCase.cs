@@ -3,15 +3,15 @@ using Microsoft.IdentityModel.Tokens;
 
 public class RefreshTokenUseCase
 {
-
     private readonly IConfiguration _configuration;
+    private readonly ILogger<RefreshTokenUseCase> _logger;
 
-
-    public RefreshTokenUseCase(IConfiguration configuration)
+    public RefreshTokenUseCase(IConfiguration configuration, ILogger<RefreshTokenUseCase> logger)
     {
         _configuration = configuration;
+        _logger = logger;
     }
-
+    
     public Response<LoginResponse> Handle(string refreshToken)
     {
         var token = refreshToken.Split(" ")[1];
@@ -37,7 +37,7 @@ public class RefreshTokenUseCase
         }
         catch (SecurityTokenValidationException ex)
         {
-            // @TODO: Must use "ex" to logger
+            _logger.LogInformation($"{Status.Unauthorized} : {ex.Message}");
             return new Response<LoginResponse>(Status.Unauthorized, null);
         }
     }
