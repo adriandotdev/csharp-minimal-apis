@@ -7,4 +7,8 @@ public class ProductFilter
     public int? PageNumber { get; set; }
 
     public int? PageSize { get; set; }
+
+    public int? MinPrice { get; set; }
+
+    public int? MaxPrice { get; set; }
 }

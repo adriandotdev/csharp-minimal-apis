@@ -1,7 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
-public static class ProductEndpoints
+public static class ProductEndpoints 
 {
     public static void AddProductEndpoints(this IEndpointRouteBuilder app)
     {
@@ -22,7 +22,6 @@ public static class ProductEndpoints
         IValidator<CreateProductRequest> validator
     )
     {
-
         var validationResult = await validator.ValidateAsync(request);
 
         if (!validationResult.IsValid)
@@ -40,6 +39,8 @@ public static class ProductEndpoints
         [FromQuery(Name = "category")] string? categoryName,
         [FromQuery(Name = "page_number")] int? pageNumber,
         [FromQuery(Name = "page_size")] int? pageSize,
+        [FromQuery(Name = "min_price")] int? minPrice,
+        [FromQuery(Name = "max_price")] int? maxPrice,
         [FromServices] GetProductsUseCase useCase,
         ILogger<Program> logger
     )
@@ -51,7 +52,9 @@ public static class ProductEndpoints
             ProductName = productName,
             Category = categoryName,
             PageNumber = pageNumber,
-            PageSize = pageSize
+            PageSize = pageSize,
+            MinPrice = minPrice,
+            MaxPrice = maxPrice
         };
 
         var result = await useCase.Handle(productFilter);

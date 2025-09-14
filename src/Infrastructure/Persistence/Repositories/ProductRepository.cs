@@ -14,7 +14,6 @@ public class ProductRepository : IProductRepository
 
     public async Task<ICollection<Product>> GetProducts(ProductFilter productFilter)
     {
-
         IQueryable<Product> queryBuilder = _context.Products;
 
         if (!string.IsNullOrWhiteSpace(productFilter.ProductName))
@@ -22,6 +21,12 @@ public class ProductRepository : IProductRepository
 
         if (!string.IsNullOrWhiteSpace(productFilter.Category))
             queryBuilder = queryBuilder.Where(product => EF.Functions.ILike(productFilter.Category, product.Category.Name));
+
+        if (productFilter.MinPrice.HasValue)
+            queryBuilder = queryBuilder.Where(product => product.Price >= productFilter.MinPrice);
+
+        if (productFilter.MaxPrice.HasValue)
+            queryBuilder = queryBuilder.Where(product => product.Price <= productFilter.MaxPrice);
 
         int pageNumber = productFilter.PageNumber ?? 1;
         int pageSize = productFilter.PageSize ?? 10;
@@ -86,6 +91,8 @@ public class ProductRepository : IProductRepository
         if (!string.IsNullOrWhiteSpace(productFilter.Category))
             queryBuilder = queryBuilder.Where(product => EF.Functions.ILike(productFilter.Category, product.Category.Name));
 
+        if (productFilter.MinPrice.HasValue)
+            queryBuilder = queryBuilder.Where(product => product.Price >= productFilter.MinPrice);
 
         return await queryBuilder.CountAsync();
     }

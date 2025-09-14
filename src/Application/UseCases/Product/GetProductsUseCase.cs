@@ -8,7 +8,6 @@ public class GetProductsUseCase
     public GetProductsUseCase(IProductRepository productRepository)
     {
         _productRepository = productRepository;
-
     }
 
     public async Task<Response<GetProductsResponse>> Handle(ProductFilter productFilter)
@@ -17,14 +16,14 @@ public class GetProductsUseCase
 
         if (productFilter.PageSize <= 0) return new Response<GetProductsResponse>(Status.BadRequest, null, $"Invalid page size value: {productFilter.PageSize}");
 
+        if (productFilter.MinPrice <= 0) return new Response<GetProductsResponse>(Status.BadRequest, null, $"Invalid minimum price value of {productFilter.MinPrice}");
+        
         var productCount = await _productRepository.GetProductCount(productFilter);
 
         int pageSize = productFilter.PageSize ?? 10;
         int pageNumber = productFilter.PageNumber ?? 1;
 
-        decimal totalPages = (decimal)(pageSize >= productCount ? 1 : ((decimal) productCount / pageSize)!);
-
-        if (productFilter.PageSize > totalPages) return new Response<GetProductsResponse>(Status.BadRequest, null, $"Invalid page size value: {productFilter.PageSize}. Total pages: {totalPages}");
+        decimal totalPages = pageSize >= productCount ? 1 : ((decimal)productCount / pageSize)!;
 
         int? nextPage = ((pageNumber + 1) > Math.Ceiling(totalPages)) ? null : pageNumber + 1;
 
