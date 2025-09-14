@@ -16,7 +16,11 @@ public static class ProductEndpoints
         group.MapDelete("/{id}", DeleteProductById).RequireAuthorization("admin_access");
     }
     
-    private static async Task<IResult> CreateProduct([FromServices] CreateProductUseCase useCase, [FromBody] CreateProductRequest request, IValidator<CreateProductRequest> validator)
+    private static async Task<IResult> CreateProduct(
+        [FromServices] CreateProductUseCase useCase,
+        [FromBody] CreateProductRequest request,
+        IValidator<CreateProductRequest> validator
+    )
     {
 
         var validationResult = await validator.ValidateAsync(request);
@@ -31,14 +35,23 @@ public static class ProductEndpoints
         return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }
 
-    private static async Task<IResult> GetProducts([FromQuery(Name = "product_name")] string? productName, [FromQuery(Name = "category")] string? categoryName,  [FromServices] GetProductsUseCase useCase, ILogger<Program> logger)
+    private static async Task<IResult> GetProducts(
+        [FromQuery(Name = "product_name")] string? productName,
+        [FromQuery(Name = "category")] string? categoryName,
+        [FromQuery(Name = "page_number")] int? pageNumber,
+        [FromQuery(Name = "page_size")] int? pageSize,
+        [FromServices] GetProductsUseCase useCase,
+        ILogger<Program> logger
+    )
     {
         logger.LogInformation($"Query: {productName}");
 
         var productFilter = new ProductFilter
         {
             ProductName = productName,
-            Category = categoryName
+            Category = categoryName,
+            PageNumber = pageNumber,
+            PageSize = pageSize
         };
 
         var result = await useCase.Handle(productFilter);
@@ -46,7 +59,11 @@ public static class ProductEndpoints
         return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }
 
-    private static async Task<IResult> GetProductById(string id, [FromServices] GetProductByIdUseCase useCase, IValidator<IdRequest> validator)
+    private static async Task<IResult> GetProductById(
+        string id,
+        [FromServices] GetProductByIdUseCase useCase,
+        IValidator<IdRequest> validator
+    )
     {
         var request = new IdRequest { Id = id };
         var validationResult = await validator.ValidateAsync(request);
@@ -61,7 +78,11 @@ public static class ProductEndpoints
         return Response<IResult>.MapResponse(result.Status, data: result.Data, result.Message);
     }
 
-    private static async Task<IResult> DeleteProductById(string id, [FromServices] DeleteProductByIdUseCase useCase, IValidator<IdRequest> validator)
+    private static async Task<IResult> DeleteProductById(
+        string id,
+        [FromServices] DeleteProductByIdUseCase useCase,
+        IValidator<IdRequest> validator
+    )
     {
         var request = new IdRequest { Id = id };
         var validationResult = await validator.ValidateAsync(request);

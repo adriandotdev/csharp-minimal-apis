@@ -15,15 +15,21 @@ public class ProductRepository : IProductRepository
     public async Task<ICollection<Product>> GetProducts(ProductFilter productFilter)
     {
 
-        IQueryable<Product> query = _context.Products;
+        IQueryable<Product> queryBuilder = _context.Products;
 
         if (!string.IsNullOrWhiteSpace(productFilter.ProductName))
-            query = query.Where(product => product.Name.ToLower().Contains(productFilter.ProductName.ToLower()));
+            queryBuilder = queryBuilder.Where(product => product.Name.ToLower().Contains(productFilter.ProductName.ToLower()));
 
         if (!string.IsNullOrWhiteSpace(productFilter.Category))
-            query = query.Where(product => EF.Functions.ILike(productFilter.Category, product.Category.Name));
+            queryBuilder = queryBuilder.Where(product => EF.Functions.ILike(productFilter.Category, product.Category.Name));
 
-        return await query.ToListAsync();
+        int pageNumber = productFilter.PageNumber ?? 1;
+        int pageSize = productFilter.PageSize ?? 10;
+
+        return await queryBuilder
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
     }
 
     public async Task<CreateProductResponse> CreateProduct(CreateProductRequest request)
@@ -68,5 +74,19 @@ public class ProductRepository : IProductRepository
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
         }
+    }
+
+    public async Task<int> GetProductCount(ProductFilter productFilter)
+    {
+         IQueryable<Product> queryBuilder = _context.Products;
+
+        if (!string.IsNullOrWhiteSpace(productFilter.ProductName))
+            queryBuilder = queryBuilder.Where(product => product.Name.ToLower().Contains(productFilter.ProductName.ToLower()));
+
+        if (!string.IsNullOrWhiteSpace(productFilter.Category))
+            queryBuilder = queryBuilder.Where(product => EF.Functions.ILike(productFilter.Category, product.Category.Name));
+
+
+        return await queryBuilder.CountAsync();
     }
 }

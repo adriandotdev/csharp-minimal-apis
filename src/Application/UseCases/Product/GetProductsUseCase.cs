@@ -8,10 +8,42 @@ public class GetProductsUseCase
     public GetProductsUseCase(IProductRepository productRepository)
     {
         _productRepository = productRepository;
+
     }
 
-    public async Task<Response<ICollection<Product>>> Handle(ProductFilter productFilter)
+    public async Task<Response<GetProductsResponse>> Handle(ProductFilter productFilter)
     {
-        return new Response<ICollection<Product>>(Status.OK, data: await _productRepository.GetProducts(productFilter));
+        if (productFilter.PageNumber <= 0) return new Response<GetProductsResponse>(Status.BadRequest, null, $"Invalid page number value: {productFilter.PageNumber}");
+
+        if (productFilter.PageSize <= 0) return new Response<GetProductsResponse>(Status.BadRequest, null, $"Invalid page size value: {productFilter.PageSize}");
+
+        var productCount = await _productRepository.GetProductCount(productFilter);
+
+        int pageSize = productFilter.PageSize ?? 10;
+        int pageNumber = productFilter.PageNumber ?? 1;
+
+        decimal totalPages = (decimal)(pageSize >= productCount ? 1 : ((decimal) productCount / pageSize)!);
+
+        if (productFilter.PageSize > totalPages) return new Response<GetProductsResponse>(Status.BadRequest, null, $"Invalid page size value: {productFilter.PageSize}. Total pages: {totalPages}");
+
+        int? nextPage = ((pageNumber + 1) > Math.Ceiling(totalPages)) ? null : pageNumber + 1;
+
+        int? previousPage = pageNumber - 1 <= 0 ? null : pageNumber - 1;
+
+        var response = new GetProductsResponse(
+
+            await _productRepository.GetProducts(productFilter),
+            new Pagination(
+
+                productCount,
+                pageNumber,
+                (int) Math.Ceiling(totalPages),
+                nextPage,
+                previousPage
+            )
+        );
+        
+        
+        return new Response<GetProductsResponse>(Status.OK, response);
     }
 }
