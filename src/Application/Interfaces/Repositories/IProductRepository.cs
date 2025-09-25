@@ -8,4 +8,6 @@ public interface IProductRepository
     Task DeleteProductById(int id);
 
     Task<int> GetProductCount(ProductFilter productFilter);
+
+    Task<Product> UpdateProductById(int id, UpdateProductRequest request);
 }

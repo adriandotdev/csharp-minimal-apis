@@ -96,4 +96,18 @@ public class ProductRepository : IProductRepository
 
         return await queryBuilder.CountAsync();
     }
+
+    public async Task<Product> UpdateProductById(int id, UpdateProductRequest request)
+    {
+        var product = await _context.Products.FindAsync(id);
+
+        if (product is null) throw new KeyNotFoundException($"Product with ID of {id} is not found");
+
+        product.Name = request.Name ?? product.Name;
+        product.Description = request.Description ?? product.Description;
+
+        await _context.SaveChangesAsync();
+
+        return product;
+    }
 }

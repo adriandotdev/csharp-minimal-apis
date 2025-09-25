@@ -1,21 +1,23 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
-public static class ProductEndpoints 
+public static class ProductEndpoints
 {
     public static void AddProductEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/v1/products");
 
         group.MapGet("/", GetProducts).RequireAuthorization("general_access");
-   
+
         group.MapGet("/{id}", GetProductById).RequireAuthorization("general_access");
 
         group.MapPost("/", CreateProduct).RequireAuthorization("admin_access");
 
         group.MapDelete("/{id}", DeleteProductById).RequireAuthorization("admin_access");
+
+        group.MapPut("/{id}", UpdateProductById);
     }
-    
+
     private static async Task<IResult> CreateProduct(
         [FromServices] CreateProductUseCase useCase,
         [FromBody] CreateProductRequest request,
@@ -75,7 +77,7 @@ public static class ProductEndpoints
         {
             return TypedResults.BadRequest(Response<IResult>.MapErrors(validationResult));
         }
-        
+
         var result = await useCase.Handle(int.Parse(id));
 
         return Response<IResult>.MapResponse(result.Status, data: result.Data, result.Message);
@@ -96,6 +98,26 @@ public static class ProductEndpoints
         }
 
         var result = await useCase.Handle(int.Parse(id));
+
+        return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
+    }
+
+    private static async Task<IResult> UpdateProductById(
+        string id,
+        [FromServices] UpdateProductUseCase useCase,
+        [FromBody] UpdateProductRequest request,
+        IValidator<IdRequest> validator
+    )
+    {
+        var idRequest = new IdRequest { Id = id };
+        var validationResult = await validator.ValidateAsync(idRequest);
+
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.BadRequest(Response<IResult>.MapErrors(validationResult));
+        }
+
+        var result = await useCase.Handle(int.Parse(id), request);
 
         return Response<IResult>.MapResponse(result.Status, result.Data, result.Message);
     }

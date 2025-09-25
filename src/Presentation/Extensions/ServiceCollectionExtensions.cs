@@ -13,7 +13,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<CreateProductUseCase>();
         services.AddScoped<GetProductByIdUseCase>();
         services.AddScoped<DeleteProductByIdUseCase>();
-
+        services.AddScoped<UpdateProductUseCase>();
+        
         // Categories
         services.AddScoped<GetCategoriesUseCase>();
         services.AddScoped<CreateCategoryUseCase>();
