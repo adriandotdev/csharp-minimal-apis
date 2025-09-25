@@ -1,7 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using Configurations;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -70,9 +69,20 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
 {
-    config.DocumentName = "Product Management System";
+    config.DocumentName = "inventory-management-system";
     config.Title = "API V1";
     config.Version = "v1";
+
+    // 👇 Add this part
+    config.AddSecurity("JWT", Enumerable.Empty<string>(), new NSwag.OpenApiSecurityScheme
+    {
+        Type = NSwag.OpenApiSecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = NSwag.OpenApiSecurityApiKeyLocation.Header,
+        Name = "Authorization",
+        Description = "Enter JWT token like: **Bearer your_token_here**"
+    });
 });
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
@@ -91,18 +101,22 @@ if (app.Environment.IsDevelopment())
     app.UseOpenApi();
     app.UseSwaggerUi(config =>
     {
-        config.DocumentTitle = "PMS";
+        config.DocumentTitle = "Inventory Management System";
         config.Path = "/swagger";
-        config.DocumentPath = "/swagger/pms/swagger.json";
+        config.DocumentPath = "/swagger/inventory-management-system/swagger.json";
         config.DocExpansion = "list";
+        config.PersistAuthorization = true;
     });
 }
+
+app.UseRouting();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.AddAuthenticationEndpoints();
 app.AddProductEndpoints();
 app.AddCategoryEndpoints();
-app.AddAuthenticationEndpoints();
+
 
 app.Run();

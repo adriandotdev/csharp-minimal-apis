@@ -50,5 +50,13 @@ public class ProductEntityTypeConfiguration : IEntityTypeConfiguration<Product>
             .HasForeignKey(p => p.CategoryId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder
+            .Property(p => p.CurrentStock)
+            .HasDefaultValueSql("0");
+
+        builder
+            .Property(p => p.LowStockThreshold)
+            .HasDefaultValueSql("0");
     }
 }

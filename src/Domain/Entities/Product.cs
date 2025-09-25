@@ -22,5 +22,12 @@ public class Product
 
     public DateTime UpdatedAt { get; set; }
 
+    public int CurrentStock { get; set; } = 0;
+
+    public int LowStockThreshold { get; set; } = 0;
+
+    // Navigations
+    public ICollection<ProductSupplier> ProductSuppliers { get; set; } = [];
+
     public Category Category { get; set; } = null!;
 }
