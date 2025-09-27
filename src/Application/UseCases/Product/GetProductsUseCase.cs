@@ -1,48 +1,52 @@
 using Application.Interfaces;
 
-public class GetProductsUseCase
+namespace UseCase
 {
-
-    private readonly IProductRepository _productRepository;
-
-    public GetProductsUseCase(IProductRepository productRepository)
+    public class GetProductsUseCase
     {
-        _productRepository = productRepository;
-    }
+        private readonly IProductRepository _productRepository;
 
-    public async Task<Response<GetProductsResponse>> Handle(ProductFilter productFilter)
-    {
-        if (productFilter.PageNumber <= 0) return new Response<GetProductsResponse>(Status.BadRequest, null, $"Invalid page number value: {productFilter.PageNumber}");
+        public GetProductsUseCase(IProductRepository productRepository)
+        {
+            _productRepository = productRepository;
+        }
 
-        if (productFilter.PageSize <= 0) return new Response<GetProductsResponse>(Status.BadRequest, null, $"Invalid page size value: {productFilter.PageSize}");
+        public async Task<Response<GetProductsResponse>> Handle(ProductFilter productFilter)
+        {
+            if (productFilter.PageNumber <= 0) return new Response<GetProductsResponse>(Status.BadRequest, null, $"Invalid page number value: {productFilter.PageNumber}");
 
-        if (productFilter.MinPrice <= 0) return new Response<GetProductsResponse>(Status.BadRequest, null, $"Invalid minimum price value of {productFilter.MinPrice}");
-        
-        var productCount = await _productRepository.GetProductCount(productFilter);
+            if (productFilter.PageSize <= 0) return new Response<GetProductsResponse>(Status.BadRequest, null, $"Invalid page size value: {productFilter.PageSize}");
 
-        int pageSize = productFilter.PageSize ?? 10;
-        int pageNumber = productFilter.PageNumber ?? 1;
+            if (productFilter.MinPrice <= 0) return new Response<GetProductsResponse>(Status.BadRequest, null, $"Invalid minimum price value of {productFilter.MinPrice}");
 
-        decimal totalPages = pageSize >= productCount ? 1 : ((decimal)productCount / pageSize)!;
+            var productCount = await _productRepository.GetProductCount(productFilter);
 
-        int? nextPage = ((pageNumber + 1) > Math.Ceiling(totalPages)) ? null : pageNumber + 1;
+            int pageSize = productFilter.PageSize ?? 10;
+            int pageNumber = productFilter.PageNumber ?? 1;
 
-        int? previousPage = pageNumber - 1 <= 0 ? null : pageNumber - 1;
+            decimal totalPages = pageSize >= productCount ? 1 : ((decimal)productCount / pageSize)!;
 
-        var response = new GetProductsResponse(
+            int? nextPage = ((pageNumber + 1) > Math.Ceiling(totalPages)) ? null : pageNumber + 1;
 
-            await _productRepository.GetProducts(productFilter),
-            new Pagination(
+            int? previousPage = pageNumber - 1 <= 0 ? null : pageNumber - 1;
 
-                productCount,
-                pageNumber,
-                (int) Math.Ceiling(totalPages),
-                nextPage,
-                previousPage
-            )
-        );
-        
-        
-        return new Response<GetProductsResponse>(Status.OK, response);
+            var products = await _productRepository.GetProducts(productFilter);
+
+            var response = new GetProductsResponse(
+
+                products,
+                new Pagination(
+
+                    productCount,
+                    pageNumber,
+                    (int)Math.Ceiling(totalPages),
+                    nextPage,
+                    previousPage
+                )
+            );
+
+
+            return new Response<GetProductsResponse>(Status.OK, response);
+        }
     }
 }

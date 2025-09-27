@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using UseCase;
 
 public static class ProductEndpoints
 {

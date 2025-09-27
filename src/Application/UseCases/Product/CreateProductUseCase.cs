@@ -1,31 +1,34 @@
 using Application.Interfaces;
 
-public class CreateProductUseCase
+namespace UseCase
 {
-
-    private readonly IProductRepository _productRepository;
-    private readonly ICategoryRepository _categoryRepository;
-
-
-    public CreateProductUseCase(IProductRepository productRepository, ICategoryRepository categoryRepository)
+    public class CreateProductUseCase
     {
-        _productRepository = productRepository;
-        _categoryRepository = categoryRepository;
-    }
 
-    public async Task<Response<CreateProductResponse>> Handle(CreateProductRequest request)
-    {
-        try
+        private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
+
+
+        public CreateProductUseCase(IProductRepository productRepository, ICategoryRepository categoryRepository)
         {
-            await _categoryRepository.GetCategoryById(request.CategoryId);
-
-            var createdProduct = await _productRepository.CreateProduct(request);
-            return new Response<CreateProductResponse>(Status.Created, createdProduct, $"/api/v1/products/{createdProduct.Id}");
-            
+            _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
         }
-        catch (KeyNotFoundException ex)
+
+        public async Task<Response<CreateProductResponse>> Handle(CreateProductRequest request)
         {
-            return new Response<CreateProductResponse>(Status.NotFound, null, ex.Message);
+            try
+            {
+                await _categoryRepository.GetCategoryById(request.CategoryId);
+
+                var createdProduct = await _productRepository.CreateProduct(request);
+                return new Response<CreateProductResponse>(Status.Created, createdProduct, $"/api/v1/products/{createdProduct.Id}");
+
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return new Response<CreateProductResponse>(Status.NotFound, null, ex.Message);
+            }
         }
     }
 }

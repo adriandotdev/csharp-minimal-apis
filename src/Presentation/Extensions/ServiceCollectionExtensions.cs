@@ -3,6 +3,7 @@ using Configurations;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
+using UseCase;
 
 public static class ServiceCollectionExtensions
 {
