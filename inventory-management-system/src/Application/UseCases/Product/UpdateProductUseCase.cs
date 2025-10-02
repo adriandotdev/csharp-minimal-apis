@@ -17,7 +17,7 @@ public class UpdateProductUseCase
             var product = await _productRepository.UpdateProductById(id, request);
 
             return new Response<UpdateProductResponse>(Status.OK,
-            new UpdateProductResponse(product.Name, product.Description));
+            new UpdateProductResponse(product.Name, product.Description!));
         }
         catch (KeyNotFoundException ex)
         {
