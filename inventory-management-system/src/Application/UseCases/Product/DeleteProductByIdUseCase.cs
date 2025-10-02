@@ -1,6 +1,8 @@
 using Application.Interfaces;
 
-public class DeleteProductByIdUseCase
+namespace UseCase
+{
+    public class DeleteProductByIdUseCase
 {
 
     private readonly IProductRepository _productRepository;
@@ -27,4 +29,5 @@ public class DeleteProductByIdUseCase
             return new Response<object?>(Status.NotFound, null, e.Message);
         }
     }
+}
 }

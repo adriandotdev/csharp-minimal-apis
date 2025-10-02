@@ -2,7 +2,7 @@ using Application.Interfaces;
 using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-
+using UseCase;
 public class DeleteProductByIdUseCaseTest
 {
     private readonly IProductRepository _productRepository = Substitute.For<IProductRepository>();
