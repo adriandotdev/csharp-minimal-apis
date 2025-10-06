@@ -1,6 +1,3 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
 name: inventory-management-system
 
 on:
@@ -30,13 +27,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Publish and Build Image
-        uses: rossmaclean/docker-build-push-action@v0.0.27
+      - name: Docker login
+        uses: docker/login-action@v3
         with:
-          docker-user: ${{ secrets.DOCKER_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKER_TOKEN_SECRET }}
-          image-name: ims
-          version: v1
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/ims:latest
+          platforms: linux/amd64
           build-args: |
-            DEFAULT_CONNECTION=${{ vars.CONNECTIONSTRINGS__DEFAULTCONNECTION }}
+            ASPNETCORE_ENVIRONMENT=Production
+            DEFAULT_CONNECTION=${{ secrets.DEFAULT_CONNECTION }}
+            AUTHENTICATION__DEFAULTSCHEME=${{ vars.AUTHENTICATION__DEFAULTSCHEME }}
+            AUTHENTICATION__SCHEMES__BEARER__ISSUERSIGNINGKEY=${{ vars.AUTHENTICATION__SCHEMES__BEARER__ISSUERSIGNINGKEY }}
+            AUTHENTICATION__SCHEMES__BEARER__VALIDAUDIENCE=${{ vars.AUTHENTICATION__SCHEMES__BEARER__VALIDAUDIENCE }}
+            AUTHENTICATION__SCHEMES__BEARER__VALIDAUDIENCES__0=${{ vars.AUTHENTICATION__SCHEMES__BEARER__VALIDAUDIENCES__0 }}
+            AUTHENTICATION__SCHEMES__BEARER__VALIDISSUER=${{ vars.AUTHENTICATION__SCHEMES__BEARER__VALIDISSUER }}
