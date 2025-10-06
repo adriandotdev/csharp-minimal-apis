@@ -38,3 +38,5 @@ jobs:
           dockerhub-token: ${{ secrets.DOCKER_TOKEN_SECRET }}
           image-name: ims
           version: v1
+          build-args: |
+            DEFAULT_CONNECTION=${{ vars.CONNECTIONSTRINGS__DEFAULTCONNECTION }}
