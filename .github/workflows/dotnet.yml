@@ -26,13 +26,15 @@ jobs:
       - name: Test
         run: dotnet test --no-build --verbosity normal
   publish:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
       - name: Publish and Build Image
         uses: rossmaclean/docker-build-push-action@v0.0.27
         with:
-          image: adriandotdev/ims:v1
-          registry: docker.io
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          docker-user: ${{ secrets.DOCKER_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKER_TOKEN_SECRET }}
+          image-name: ims
+          version: v1
