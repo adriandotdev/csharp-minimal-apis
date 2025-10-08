@@ -25,9 +25,12 @@ public class CategoryRepository : ICategoryRepository
         return category;
     }
 
-    public async Task<ICollection<Category>> GetCategories()
+    public async Task<ICollection<GetCategoriesResponse>> GetCategories()
     {
-        return await _context.Categories.ToListAsync();
+        return await _context.Categories
+            .Select(category => new GetCategoriesResponse(category.Id, category.Name, category.Description ?? "N/A"))
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task<Category> GetCategoryById(int id)

@@ -1,6 +1,6 @@
 public interface ICategoryRepository
 {
-    Task<ICollection<Category>> GetCategories();
+    Task<ICollection<GetCategoriesResponse>> GetCategories();
     Task<Category> CreateCategory(CreateCategoryRequest request);
     Task<Category> UpdateCategory(int id, CreateCategoryRequest request);
 

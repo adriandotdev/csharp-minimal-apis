@@ -1,6 +1,5 @@
 public class GetCategoriesUseCase
 {
-
     private readonly ICategoryRepository _categoryRepository;
 
     public GetCategoriesUseCase(ICategoryRepository categoryRepository)
@@ -8,8 +7,8 @@ public class GetCategoriesUseCase
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<Response<ICollection<Category>>> Handle()
+    public async Task<Response<ICollection<GetCategoriesResponse>>> Handle()
     {
-        return new Response<ICollection<Category>>(Status.OK, await _categoryRepository.GetCategories());
-    }
+        return new(Status.OK, await _categoryRepository.GetCategories());
+    }           
 }
