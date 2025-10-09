@@ -16,27 +16,12 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 builder.Services.ConfigureCorsPolicy();
 builder.Services.ConfigureAuthentication(builder.Configuration);
 builder.Services.ConfigureAuthorization();
+builder.Services.ConfigureSwagger();
+
 builder.Services.AddInfrastructure();
 builder.Services.AddApplicationServices();
-
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApiDocument(config =>
-{
-    config.DocumentName = "inventory-management-system";
-    config.Title = "API V1";
-    config.Version = "v1";
 
-    // 👇 Add this part
-    config.AddSecurity("JWT", Enumerable.Empty<string>(), new NSwag.OpenApiSecurityScheme
-    {
-        Type = NSwag.OpenApiSecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        In = NSwag.OpenApiSecurityApiKeyLocation.Header,
-        Name = "Authorization",
-        Description = "Enter JWT token like: **Bearer your_token_here**"
-    });
-});
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
