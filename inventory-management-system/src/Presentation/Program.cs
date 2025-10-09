@@ -17,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 });
 
 builder.Services.ConfigureCorsPolicy();
+builder.Services.ConfigureAuthorization();
 builder.Services.AddInfrastructure();
 builder.Services.AddApplicationServices();
 
@@ -36,35 +37,6 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["IssuerSigningKey"]!))
         };
     });
-
-
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("admin_access",
-        policy =>
-            policy
-                .RequireRole("Admin")
-                .RequireClaim("scope", "admin_scope")
-                .RequireClaim("token_type", "access")
-    );
-
-    options.AddPolicy("staff_access",
-        policy =>
-            policy
-                .RequireRole("Staff")
-                .RequireClaim("scope", "staff_scope")
-                .RequireClaim("token_type", "access")
-    );
-
-    options.AddPolicy("general_access",
-        policy =>
-            policy
-                .RequireRole("Admin", "Staff")
-                .RequireClaim("scope", ["staff_scope", "admin_scope"])
-                .RequireClaim("token_type", "access")
-    );
-
-});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
