@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using Configurations;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -15,10 +16,9 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
     options.UseNpgsql(dbSettings.DefaultConnection);
 });
 
+builder.Services.ConfigureCorsPolicy();
 builder.Services.AddInfrastructure();
 builder.Services.AddApplicationServices();
-
-builder.Services.AddCors();
 
 builder.Services.AddAuthentication().AddJwtBearer(options =>
     {
@@ -110,7 +110,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
-app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
