@@ -1,10 +1,7 @@
-using System.Text;
 using System.Text.Json.Serialization;
 using Configurations;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,26 +14,10 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 });
 
 builder.Services.ConfigureCorsPolicy();
+builder.Services.ConfigureAuthentication(builder.Configuration);
 builder.Services.ConfigureAuthorization();
 builder.Services.AddInfrastructure();
 builder.Services.AddApplicationServices();
-
-builder.Services.AddAuthentication().AddJwtBearer(options =>
-    {
-        var config = builder.Configuration.GetSection("Authentication:Schemes:Bearer");
-        
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = config["ValidIssuer"],
-            ValidAudience = config["ValidAudience"],
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["IssuerSigningKey"]!))
-        };
-    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
