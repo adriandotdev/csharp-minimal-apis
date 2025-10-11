@@ -33,9 +33,12 @@ public static class ServiceCollectionExtensions
     
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<ICategoryRepository, CategoryRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
+        services.Scan(scan => scan
+            .FromAssemblies(typeof(Infrastructure.Persistence.Repositories.RepositoryAssembly).Assembly)
+            .AddClasses(filter => filter.Where(className => className.Name.EndsWith("Repository")))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
         
         services.AddDbContext<AppDbContext>((serviceProvider, options) =>
         {
