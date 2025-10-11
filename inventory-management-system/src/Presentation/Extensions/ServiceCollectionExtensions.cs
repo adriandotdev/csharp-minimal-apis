@@ -4,38 +4,29 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
 using UseCase;
+using Scrutor;
 
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-    {
-        // Products
-        services.AddScoped<GetProductsUseCase>();
-        services.AddScoped<CreateProductUseCase>();
-        services.AddScoped<GetProductByIdUseCase>();
-        services.AddScoped<DeleteProductByIdUseCase>();
-        services.AddScoped<UpdateProductUseCase>();
-        
-        // Categories
-        services.AddScoped<GetCategoriesUseCase>();
-        services.AddScoped<CreateCategoryUseCase>();
-        services.AddScoped<GetCategoryByIdUseCase>();
-        services.AddScoped<UpdateCategoryUseCase>();
-    
-        // Users
-        services.AddScoped<CreateUserUseCase>();
-        services.AddScoped<LoginUseCase>();
-        services.AddScoped<RefreshTokenUseCase>();
-        
-        // Utils
-        services.AddScoped<JwtService>();
+    {   
+        // Map application use-cases
+        services.Scan(scan => scan
+            .FromAssemblies(typeof(Application.UseCases.UseCaseAssembly).Assembly)
+            .AddClasses(filter => filter.Where(className => className.Name.EndsWith("UseCase")))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsSelf()
+            .WithScopedLifetime());
 
-        // Validators
-        services.AddScoped<IValidator<CreateCategoryRequest>, CreateCategoryValidator>();
-        services.AddScoped<IValidator<CreateProductRequest>, CreateProductValidator>();
-        services.AddScoped<IValidator<IdRequest>, GetResourceByIdValidator>();
-        services.AddScoped<IValidator<CreateUserRequest>, CreateUserValidator>();
-        services.AddScoped<IValidator<LoginRequest>, LoginValidator>();
+        // Map concrete validator classes
+        services.Scan(scan => scan
+            .FromAssemblies(typeof(Application.Validators.ValidatorsAssembly).Assembly)
+            .AddClasses(filter => filter.Where(className => className.Name.EndsWith("Validator")))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+        
+        services.AddScoped<JwtService>();
         
         return services;
     }
